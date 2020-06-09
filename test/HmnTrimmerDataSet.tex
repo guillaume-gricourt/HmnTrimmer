@@ -1,0 +1,333 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{array}
+\usepackage{geometry}
+\usepackage{stix}
+\usepackage{microtype}
+\usepackage[export]{adjustbox}
+\usepackage{float}
+
+%%%%%%%%%%%%%%%%%%
+%%  SETTINGS    %%
+%%%%%%%%%%%%%%%%%%
+
+\geometry{%
+  left=2.5cm,
+  right=2.5cm,
+  top=1.5cm,
+  bottom=2.0cm
+}
+\setlength{\parindent}{0pt}
+\pagestyle{empty}
+
+\title{Dataset v0.5.0}
+
+\begin{document}
+
+\maketitle
+
+\section{Description}
+Each dataset are built with R1, R2 and interleaved file.\par
+Bases quality are built randomly using 3 ranges : good (25-30), medium (18-21) and bad (1-3).
+
+\section{GoldInput}
+\subsection{Big - BIG}
+Several groups of sequence with differents range of length :
+\begin{itemize}
+    \item 1500 sequences of 30 pb 
+    \item 2000 sequences of 40 pb
+    \item 3000 sequences of 50 pb
+    \item 1500 sequences of 75 pb
+    \item 2000 sequences of 100 pb
+\end{itemize}
+A pair between R1 and R2 are the same length.\par
+Groups of length are chooseen randomly.\par
+Good quality is used.\par
+
+\subsection{Length Minimum - LENMIN}
+10 sequences following :
+\begin{table}[H]
+\begin{tabular}{|l|c|c|}\hline
+\textbf{Record} & \textbf{R1} (pb) & \textbf{R2} (pb) \\ \hline
+    1 & 20 & 19 \\ \hline
+    2 & 20 & 20 \\ \hline
+    3 & 20 & 21 \\ \hline
+    4 & 49 & 50 \\ \hline
+    5 & 51 & 50 \\ \hline
+    6 & 50 & 50 \\ \hline
+    7 & 100 & 99 \\ \hline
+    8 & 100 & 100 \\ \hline
+    9 & 101 & 101 \\ \hline
+\end{tabular}
+\end{table}
+A good quality is used.
+
+\subsection{Quality Sliding Window - QUALSLD}
+10 sequences following :
+\begin{table}[H]
+\begin{tabular}{|l|c|c|c|c|c|c|c|c|} \hline
+    \textbf{Record} & \multicolumn{4}{c|}{R1} & \multicolumn{4}{c|}{R2} \\ \hline
+    Quality & Good & Medium & Bad & Total length & Good & Medium & Bad & Total length\\ \hline
+    1 & 0-5 & & & 5 & 0-15 & & & 15 \\ \hline
+    2 & 0-15 & & & 15 & 0-5 & & & 5 \\ \hline
+    3 & 0-74,81-100 & 75-80 & & 100 & 0-100 & & & 100 \\ \hline
+    4 & 0-100 & & & 100 & 0-74,81-100 & 75-80 & & 100 \\ \hline
+    5 & 0-74,81-100 & 75-80 & & 100 & 0-74,81-100 & 75-80 & & 100 \\ \hline
+    6 & 0-49,71-100 & 50-70 & & 100 & 0-100 & & & 100 \\ \hline
+    7 & 0-100 & & & 100 & 0-69,81-100 & 70-80 & & 100 \\ \hline
+    8 & & 0-2,7-100 & 3-6 & 100 & 0-100 & & & 100 \\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{Quality Tail - QUALTAIL}
+7 sequences following:
+\begin{table}[H]
+\begin{tabular}{|l|c|c|c|c|c|c|c|c|} \hline
+    \textbf{Record} & \multicolumn{4}{c|}{R1} & \multicolumn{4}{c|}{R2} \\ \hline
+    Quality & Good & Medium & Bad (Q30) & Total length & Good & Medium & Bad (Q30) & Total length\\ \hline
+    1 & 0-5 & & & 5 & 0-15 & & & 15 \\ \hline
+    2 & 0-99 & & 5 & 15 & 0-5 & & & 5 \\ \hline
+    3 & 0-99 & & 100- (5) & 150 & 0-150 & & & 150 \\ \hline
+    4 & 0-150 & & & 150 & 0-99 & & 100- (5) & 150 \\ \hline
+    5 & 0-99 & & 100- (5) & 150 & 0-99 & & 100- (5) & 150 \\ \hline
+    6 & 0-119 & & 120- (10) & 150 & 0-150 & & & 150 \\ \hline
+    7 & & 0-69,81-100 & 70-80 & 150 & & 0-69,81-100 & 70-80 & 150 \\ \hline
+\end{tabular}
+\end{table}
+
+
+\subsection{Information Dust - INFODUST}
+6 sequences following:
+\begin{table}[H]
+\begin{tabular}{|l|c|c|c|c|} \hline
+    \textbf{Record} & \multicolumn{2}{c|}{R1} & \multicolumn{2}{c|}{R2} \\ \hline
+    Quality & Score & Length & Score & Length\\ \hline
+    1 & 1.06 & 50 & 1.06 & 50 \\ \hline
+    2 & 1.06 & 50 & 1.42 & 50 \\ \hline
+    3 & 1.98 & 150 & 2.40 & 150 \\ \hline
+    4 & 2.97 & 200 & 4.45 & 300 \\ \hline
+    5 & 6.03 & 300 & 2.40 & 150 \\ \hline
+    6 & 3.97 & 200 & 4.45 & 300 \\ \hline
+\end{tabular}
+\end{table}
+A good quality is used.
+
+\subsection{Information N - INFON}
+4 sequences following:
+\begin{table}[H]
+\begin{tabular}{|l|c|c|c|c|} \hline
+    \textbf{Record} & \multicolumn{2}{c|}{R1} & \multicolumn{2}{c|}{R2} \\ \hline
+    Quality & N & Length & Score & Length\\ \hline
+    1 & 0 & 50 & 0 & 50 \\ \hline
+    2 & 1 & 50 & 0 & 150 \\ \hline
+    3 & 0 & 150 & 0 & 150 \\ \hline
+    4 & 2 & 200 & 3 & 300 \\ \hline
+    5 & 4 & 200 & 4 & 300 \\ \hline
+    6 & 0 & 300 & 0 & 300 \\ \hline
+\end{tabular}
+\end{table}
+
+
+\section{GoldOutput}
+
+
+\subsection{BIG}
+\textbf{BIG-A} : keeping length from 35 pb\\
+\textbf{BIG-B} : keeping length from 55 pb
+
+\subsection{LENGTHMIN}
+\textbf{LENGTHMIN-A} : remove sequences below 20] pb\\
+\textbf{LENGTHMIN-B} : remove sequences below 50] pb\\
+\textbf{LENGTHMIN-C} : remove sequences below 100] pb
+
+\subsection{QUALSLD}
+\textbf{QUALSLD-A} : R1+R2 : 1, 2, 7, 8 removed\\
+\textbf{QUALSLD-B} : R1+R2 : 1, 2 removed, R2 : 7 truncated\\
+\textbf{QUALSLD-C} : R1+R2 : 1, 2, 8 removed, R2 : 7 truncated\\
+\textbf{QUALSLD-D} : R1+R2 : 1, 2, 8 removed, R2 : 7 truncated\\
+\textbf{QUALSLD-E} : R1 : 8 truncated, R2 : 7 truncated\\
+\textbf{QUALSLD-F} : R2 : 7 truncated
+
+\subsection{QUALTAIL}
+\textbf{QUALTAIL-A} : 6 truncated\\
+\textbf{QUALTAIL-B} : 3, 7 truncated, R1 : 4 truncated, R2 : 5 truncated\\
+\textbf{QUALTAIL-C} : without 7, 3 truncated, R1 : 4 truncated, R2 : 5 truncated\\
+\textbf{QUALTAIL-D} : without 3, 4, 5, 7\\
+\textbf{QUALTAIL-E} : without 1,2 ; 8 truncated\\
+\textbf{QUALTAIL-F} : without 1, 2, 8\\
+
+\subsection{INFODUST}
+\textbf{INFODUST-A} : under 3, without 3, 4, 5\\
+\textbf{INFODUST-B} : under 5, without 4
+    
+\subsection{INFON}
+\textbf{INFON-A} : without 2, 4, 5\\
+\textbf{INFON-B} : without 5\\
+
+\subsection{Other}
+\textbf{EMPTY.fastq} : empty file
+
+\section{Tests}
+\subsection{Description}
+Two main groups : General, Trimmer divide in several categories\\
+Categories : GenTrim, GenDiscard, GenFormat, GenThread, GenCompress, TrimLengthMin, TrimQualTail, TrimQualSld, TrimInfoDust, TrimInfoEntropy\par
+
+For tests belong to General group, no rules exist, better combination are employed.\\
+For test belong to Trimmer group, only trimming paired is test, with 4 datasets : 1 without discarded sequences and 3 removing sequences.
+For each test, it's given its goal, its main and input used and output file to compare.
+
+\subsection{GenTrim}
+Goal : test if trimming works properly for trimming R1 single and R1-R2 paired.\par
+Gold Input : LENGTHMIN\\
+Sequencing : paired input/output
+Single sequencing
+\begin{table}[H]
+\begin{tabular}{|l|c|c|c|c|} \hline
+    \textbf{Name} & \textbf{Test} & \textbf{Trimmer} & \textbf{Output} \\ \hline
+    \textbf{A} & Absence of trimming & LenMin - 10 & Same input\\ \hline
+    \textbf{B} & 3 sequences trimmed & LenMin - 20 & LENGTH-A\\ \hline
+    \textbf{C} & 5 sequences trimmed & LenMin - 50 & LENGTH-B\\ \hline
+\end{tabular}
+\end{table}
+Paired sequencing
+\begin{table}[H]
+\begin{tabular}{|l|c|c|c|c|} \hline
+    \textbf{Name} & \textbf{Test} & \textbf{Trimmer} & \textbf{Output}\\ \hline
+    \textbf{D} & Absence of trimming & LenMin - 10 & Same input\\ \hline
+    \textbf{E} & R1+R2 : 2, R1 : 1 & LenMin - 20 &  LENGTH-A\\ \hline
+    \textbf{F} & R1+R2 : 3, R1 : 1, R2, 1 & LenMin - 50 & LENGTH-B\\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{GenDiscard}
+Goal : check unkeep sequences.\\
+Gold Input : LENGTHMIN\\
+Sequencing : paired input/output
+\begin{table}[H]
+\begin{tabular}{|l|c|c|c|c|} \hline
+    \textbf{Name} & \textbf{Test} & \textbf{Trimmer} & \textbf{Output} \\ \hline
+    \textbf{A} & Absence of trimming & LenMin - 10 & Empty file \\ \hline
+    \textbf{B} & R1+R2 : 2, R1 : 1 & LenMin - 20 & LENGTHMIN-A.R1.single.discard.fastq \\ \hline
+    \textbf{C} & R1+R2 : 3, R1 : 1, R2, 1 & LenMin - 50 & LENGTHMIN-B.discard.fastq \\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{GenFormat}
+Goal : test input or output are paired or interleaved matter make no differences.\\
+Gold Input : LENGTHMIN
+\begin{table}[H]
+\begin{tabular}{|l|c|c|c|c|} \hline
+    \textbf{Name} & \textbf{Test} & \textbf{Trimmer} & \textbf{Input} & \textbf{Output} \\ \hline
+    \textbf{A} & Absence of trimming & LenMin - 10 & Input - Paired & Input - Interleaved \\ \hline
+    \textbf{B} & Absence of trimming & LenMin - 10 & Input - Interleaved & Input - Paired \\ \hline
+    \textbf{C} & R1+R2 : 3, R1 : 1, R2, 1 & LenMin - 50 & Input - Paired & LENGTHMIN-B - Interleaved\\ \hline
+    \textbf{D} & R1+R2 : 3, R1 : 1, R2, 1 & LenMin - 50 & Input - Interleaved & LENGTHMIN-B - Paired\\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{GenThread}
+Goal : test if threading modify data trimmed or order of sequences.
+Gold Input : BIG\\
+Sequencing : paired input/output
+\begin{table}[H]
+\begin{tabular}{|l|c|c|c|c|c|c|} \hline
+    \textbf{Name} & \textbf{Test} & \textbf{Trimmer} & \textbf{Read batch} & \textbf{Threads} & \textbf{Output} \\ \hline
+    \textbf{A} & Absence of trimming & LenMin - 10 & 100 & 2 & Same input \\ \hline
+    \textbf{B} & Absence of trimming & LenMin - 10 & 100 & 4 & Same input\\ \hline
+    \textbf{C} & Absence of trimming & LenMin - 10 & 100 & 6 & Same input\\ \hline
+    \textbf{D} & Absence of trimming & LenMin - 10 & 100 & 8 & Same input\\ \hline
+
+    \textbf{E} & 6500 sequences trimmed & LenMin - 55 & 100 & 2 & BIG-B\\ \hline
+    \textbf{F} & 6500 sequences trimmed & LenMin - 55 & 100 & 4 & BIG-B\\ \hline
+    \textbf{G} & 6500 sequences trimmed & LenMin - 55 & 100 & 6 & BIG-B\\ \hline
+    \textbf{H} & 6500 sequences trimmed & LenMin - 55 & 100 & 8 & BIG-B \\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{GenCompress}
+Goal : test compression gzip format.\\
+Gold Input : BIG\\
+Sequencing : paired input/output
+\begin{table}[H]
+\begin{tabular}{|l|c|c|c|c|} \hline
+    \textbf{Name} & \textbf{Test} & \textbf{Trimmer} & \textbf{Input} & \textbf{Output}\\ \hline
+    \textbf{A} & Absence of trimming & LenMin - 10 & Paired - raw & Paired - gzip\\ \hline
+    \textbf{B} & Absence of trimming & LenMin - 10 & Paired - gzip & Paired - raw\\ \hline
+    \textbf{C} & 6500 sequences trimmed & LenMin - 55 & Paired - raw & BIG-B - gzip\\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{TrimLengthMin}
+Goal : test trimmer length minimum.\\
+Gold Input : LENGTHMIN\\
+Sequencing : paired input/output
+\begin{table}[H]
+\begin{tabular}{|l|c|c|c|c|} \hline
+    \textbf{Name} & \textbf{Test} & \textbf{Trimmer} & \textbf{Output} \\ \hline
+    \textbf{A} & Absence of trimming & 10 & Same input \\ \hline
+    \textbf{B} & 5 sequences trimmed, 3 from paired, 1 from R1, 1 from R2 & 50 & LENGTH-B\\ \hline
+    \textbf{C} & 8 sequences trimmed & 100 & LENGTH-C\\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{TrimQualSld}
+Goal : test trimmer quality sliding window on end of read\\
+Gold Input : QUALSLD\\
+Sequencing : paired input/output
+\begin{table}[H]
+\begin{tabular}{|l|c|c|c|c|} \hline
+    \textbf{Name} & \textbf{Test} & \textbf{Trimmer} & \textbf{Output} \\ \hline
+    \textbf{A} & Absence of trimming & 1:5 & Same input \\ \hline
+    \textbf{B} & Remove on R1 and R2 & 20:25 & QUALSLD-A\\ \hline
+    \textbf{C} & Remove on both, truncated on 1 side & 10:10 & QUALSLD-B\\ \hline
+    \textbf{D} & Remove on both, truncated on 1 side & 17:4 & QUALSLD-C\\ \hline
+    \textbf{E} & Remove on both, truncated on 1 side & 17:10 & QUALSLD-D\\ \hline
+    \textbf{F} & Truncated on both side & 4:1 & QUALSLD-E\\ \hline
+    \textbf{G} & Truncated only on 1 side & 4:4 & QUALSLD-F\\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{TrimQualTail}
+Goal : test trimmer quality on tail.\\
+Gold Input : QUALTAIL\\
+Sequencing : paired input/output
+\begin{table}[H]
+\begin{tabular}{|l|c|c|c|c|} \hline
+    \textbf{Name} & \textbf{Test} & \textbf{Trimmer} & \textbf{Output} \\ \hline
+    \textbf{A} & Absence of trimming & 2:2 & Same input \\ \hline
+    \textbf{B} & 3 sequences truncated & 5:2 & QUALTAIL-A\\ \hline
+    \textbf{C} & 3 sequences truncated & 5:2:60 & QUALTAIL-A\\ \hline
+    \textbf{D} & 3 sequences truncated & 5:5:60 & QUALTAIL-A\\ \hline
+    \textbf{E} & 3 sequences trimmed & 5:5:70 & QUALTAIL-B\\ \hline
+    \textbf{F} & 1 sequence truncated & 3:10:79 & QUALTAIL-C\\ \hline
+    \textbf{G} & 1 sequence trimmed & 3:10:81 & QUALTAIL-C\\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{TrimInfoDust}
+Goal : test trimmer information dust.\\
+Gold Input : INFODUST\\
+Sequencing : paired input/output
+\begin{table}[H]
+\begin{tabular}{|l|c|c|c|c|} \hline
+    \textbf{Name} & \textbf{Test} & \textbf{Trimmer} & \textbf{Output} \\ \hline
+    \textbf{A} & Absence of trimming & 1 & Same input\\ \hline
+    \textbf{B} & 3 sequences trimmed (1,2,3) & 2 & INFODUST-A\\ \hline
+    \textbf{C} & 5 sequences trimmed (1,2,3,4,5) & 3 & INFODUST-B\\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{TrimInfoN}
+Goal : test trimmer information N.\\
+Gold Input : INFON\\
+Sequencing : paired input/output
+\begin{table}[H]
+\begin{tabular}{|l|c|c|c|c|} \hline
+    \textbf{Name} & \textbf{Test} & \textbf{Trimmer} & \textbf{Output} \\ \hline
+    \textbf{A} & Absence of trimming & 5 & Same input\\ \hline
+    \textbf{B} & 3 sequences trimmed & 1 & INFON-A\\ \hline
+    \textbf{C} & 1 sequence trimmed & 4 & INFON-B\\ \hline
+\end{tabular}
+\end{table}
+
+\end{document}

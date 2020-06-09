@@ -1,0 +1,14 @@
+HmnTrimmer
+PLAN
+obj/
+test/Complexity/
+test/Challenge/
+lib/igzip-042/igzip/{igzip0,igzip0c,igzip1,igzip1c}
+lib/igzip-042/igzip/*so
+lib/igzip-042/igzip/*a
+lib/igzip-042/igzip/obj0/
+lib/igzip-042/igzip/obj1/
+lib/igzip-042/igzip/sobj0/
+lib/igzip-042/igzip/sobj1/
+lib/igzip-042/igzip/sobj0c/
+lib/igzip-042/igzip/sobj1c/
