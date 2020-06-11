@@ -121,6 +121,23 @@ Log level to use.
   --verbose 1..6 (error..trace)
 ```
 
+## Docker
+
+### Build Image
+`docker build -t hmntrimmer:1.0.0 .`  
+To save space, `test` folder isn't copied in image.
+
+### Run
+```shell
+docker run \
+    -it \
+    --rm \
+    -v $PWD:$PWD \
+    hmntrimmer:1.0.0 \
+    --input-fastq-forward $PWD/test/GoldInput/BIG.R1.fastq \
+    --output-fastq-forward $PWD/test/DockerTest.R1.fastq.gz \
+    --length-min 50
+``` 
 # Built with these main libraries
 
 * [SeqAn](https://seqan.readthedocs.io/en/master/index.html) - Essential library to work with HTS files, algorithms
