@@ -4,6 +4,7 @@ LABEL application="HmnTrimmer"
 LABEL maintainer="guillaume.gricourt@aphp.fr"
 
 RUN apt-get update && \
+    apt-get install -y yasm && \
     apt-get install -y build-essential && \
     apt-get install -y zlib1g-dev
 
