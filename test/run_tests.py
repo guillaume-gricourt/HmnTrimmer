@@ -4,6 +4,7 @@
 import gzip
 import hashlib
 import itertools
+import json
 import logging
 import os
 import tempfile
@@ -106,6 +107,8 @@ def runTest(test_conf):
                 mode = 'gzip'
             elif tuple_[2] == 'empty':
                 mode = 'empty'
+            elif tuple_[2] == 'json':
+                mode = 'json'
         try:
             if mode == 'gzip':
                 f = gzip.open(expected_path, 'rb')
@@ -136,7 +139,17 @@ def runTest(test_conf):
                     results.append(0)
                 else:
                     logging.error('File %s is not empty'%(result_path,))
-                    return False        
+                    return False
+            elif mode == 'json':
+                with open(expected_path) as fid:
+                    expected_json = json.load(fid)
+                with open(result_path) as fid:
+                    result_json = json.load(fid)
+                # Compare values.
+                if expected_json['statistics'] == result_json['statistics']:
+                    results.append(0)
+                else:
+                    logging.error('Report file, statistics, %s is different'%(result_path,))
         except Exception as e:
             fmt = 'Error when trying to compare %s to %s: %s ' + str(type(e))
             logging.error(fmt % (expected_path, result_path, e))
@@ -828,6 +841,41 @@ def main():
     )
     conf_list.append(conf)
 
+    # ============================================================
+    # Report File.
+    # ============================================================
+
+    # A.
+    create_tmp_files(TMPFILES, temp_files, 3, [".fastq", ".fastq", ".json"])
+    conf = TestConf(
+        program = path_program,
+        category = 'ReportFile',
+        name = 'A',
+        args = ['--input-fastq-forward', os.path.join(path_gold_input, 'QUALTAIL.R1.fastq'),
+            '--input-fastq-reverse', os.path.join(path_gold_input, 'QUALTAIL.R2.fastq'),
+            '--output-fastq-forward', temp_files[0],
+            '--output-fastq-reverse', temp_files[1],
+            '--output-report', temp_files[2],
+            '--quality-tail', '5:5:70'],
+        to_diff=[(os.path.join(path_gold_output, 'ReportFile-A.json'), temp_files[2], 'json')]
+    )
+    conf_list.append(conf)
+    # B.
+    create_tmp_files(TMPFILES, temp_files, 3, [".fastq", ".fastq", ".json"])
+    conf = TestConf(
+        program = path_program,
+        category = 'ReportFile',
+        name = 'B',
+        args = ['--input-fastq-forward', os.path.join(path_gold_input, 'QUALTAIL.R1.fastq'),
+            '--input-fastq-reverse', os.path.join(path_gold_input, 'QUALTAIL.R2.fastq'),
+            '--output-fastq-forward', temp_files[0],
+            '--output-fastq-reverse', temp_files[1],
+            '--output-report', temp_files[2],
+            '--quality-tail', '3:10:46'],
+        to_diff=[(os.path.join(path_gold_output, 'ReportFile-B.json'), temp_files[2], 'json')]
+    )
+    conf_list.append(conf)
+    
     # ============================================================
     # Execute the tests.
     # ============================================================

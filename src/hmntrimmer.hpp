@@ -21,6 +21,7 @@
 #include <iostream>
 #include <fstream>
 #include <map>
+#include <sstream>
 #include <string>
 
 // ----------------------------------------------------------------------------
@@ -125,6 +126,18 @@ struct ArgTrimmer
         }
         map[name] = value;
         return true;
+    }
+
+    std::string arg2string() const
+    {
+        std::stringstream ss;
+        for(auto const& arg : map)
+        {
+            ss << arg.first << ":" << arg.second << ", ";
+        }
+        std::string arg = ss.str();
+        arg = arg.substr(0, arg.size()-2);
+        return arg;
     }
 
     void clear ()
@@ -238,10 +251,15 @@ struct Stats
 
     TValue  time;
 
+    std::map<TValue, TValue>    distriBefore;
+    std::map<TValue, TValue>    distriAfter;
+
     Stats() :
         totalReads(0),
         keepReads(0),
-        time(0)
+        time(0),
+        distriBefore(),
+        distriAfter()
     {}
 };
 
@@ -286,18 +304,39 @@ inline void configureThreads(Trimming<TSpec, TConfig> & me)
 }
 
 // ----------------------------------------------------------------------------
+// Function printStatsMap()
+// ----------------------------------------------------------------------------
+
+template <typename TDocument, typename TJsonValue, typename TMap>
+inline void printStatsMap(TJsonValue & jsonValue, TMap & map, TDocument & document)
+{
+    typedef typename TMap::mapped_type  TParam;
+    typedef typename std::map<TParam, TParam>::const_iterator TIt;
+    
+    for (TIt it = map.begin(); it!=map.end(); ++it)
+    {
+        std::string skey = std::to_string(it->first);
+        rapidjson::Value key(skey.c_str(), document.GetAllocator());
+        rapidjson::Value value(static_cast<uint64_t>(it->second));
+        jsonValue.AddMember(key, value, document.GetAllocator());
+    }
+}
+ 
+// ----------------------------------------------------------------------------
 // Function printStats()
 // ----------------------------------------------------------------------------
 
 template <typename TSpec, typename TConfig>
 inline void printStats(Trimming<TSpec, TConfig> const & me)
 {
+    typedef CharString                  TString;
+    
     // Init.
     rapidjson::Document document;
     document.SetObject();
     rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
 
-    // Fill.
+    // Runtime.
     rapidjson::Value ksoftware(rapidjson::kObjectType);
     ksoftware.AddMember("name", 
         rapidjson::StringRef(toCString(me.options.softName)), 
@@ -307,10 +346,73 @@ inline void printStats(Trimming<TSpec, TConfig> const & me)
         allocator);
     document.AddMember("software", ksoftware, allocator);
 
+    // Analyze.
+    rapidjson::Value kanalyse(rapidjson::kObjectType);
+
+    rapidjson::Value kruntime(rapidjson::kObjectType);
+    kruntime.AddMember("unit", "seconds", allocator);
+    kruntime.AddMember("value", me.stats.time, allocator);
+    kanalyse.AddMember("runtime", kruntime, allocator);
+ 
+    TString ssequencing = "";
+    switch(me.options.sequencing){
+        case Sequencing::Undefined : ssequencing = "undefined"; break;
+        case Sequencing::Single : ssequencing = "single"; break;
+        case Sequencing::Paired : ssequencing = "paired"; break;
+    }
+    kanalyse.AddMember("sequencing", 
+        rapidjson::StringRef(toCString(ssequencing)), 
+        allocator);
+    
+    rapidjson::Value kfilenames(rapidjson::kObjectType);
+    rapidjson::Value kfilenamesInput(rapidjson::kArrayType);
+    kfilenamesInput.PushBack(
+        rapidjson::Value(toCString(me.options.inputFile.i1), allocator).Move(), 
+        allocator);
+    kfilenamesInput.PushBack(
+        rapidjson::Value(toCString(me.options.inputFile.i2), allocator).Move(), 
+        allocator);    
+    kfilenames.AddMember("input", kfilenamesInput, allocator);
+
+    rapidjson::Value kfilenamesOutput(rapidjson::kArrayType);
+    kfilenamesOutput.PushBack(
+        rapidjson::Value(toCString(me.options.outputFile.i1), allocator).Move(), 
+        allocator);
+    kfilenamesOutput.PushBack(
+        rapidjson::Value(toCString(me.options.outputFile.i2), allocator).Move(), 
+        allocator);    
+    kfilenames.AddMember("output", kfilenamesOutput, allocator);
+    kanalyse.AddMember("file", kfilenames, allocator);
+    
+    rapidjson::Value ktrimmers(rapidjson::kObjectType);
+    for(auto & idtrimmer : me.options.trimmers)
+    {
+        ktrimmers.AddMember(
+            rapidjson::StringRef(toCString(idtrimmer.name)),
+            rapidjson::Value(idtrimmer.arg2string().c_str(), allocator),
+            allocator);
+    }
+    kanalyse.AddMember("trimmers", ktrimmers, allocator);
+    
+    document.AddMember("analyze", kanalyse, allocator);
+
+    // Statistics general.
     rapidjson::Value kstatistics(rapidjson::kObjectType);
-    kstatistics.AddMember("runtime", me.stats.time, allocator);
     kstatistics.AddMember("total", me.stats.totalReads, allocator);
-    kstatistics.AddMember("keep", me.stats.keepReads, allocator);
+    kstatistics.AddMember("kept", me.stats.keepReads, allocator);
+    kstatistics.AddMember("discarded", 
+    me.stats.totalReads - me.stats.keepReads, allocator);
+
+    rapidjson::Value kdistributionBefore(rapidjson::kObjectType);
+    printStatsMap(kdistributionBefore, me.stats.distriBefore, document);
+    kstatistics.AddMember("length_reads_before", 
+    kdistributionBefore, allocator);
+
+    rapidjson::Value kdistributionAfter(rapidjson::kObjectType);
+    printStatsMap(kdistributionAfter, me.stats.distriAfter, document);
+    kstatistics.AddMember("length_reads_after", 
+    kdistributionAfter, allocator);
+    
     document.AddMember("statistics", kstatistics, allocator);
 
     // Write output.
@@ -530,6 +632,29 @@ inline void writeReadsDiscard(Trimming<TSpec, TConfig> & me)
     writeRecords(me.reads, me.readsFileDiscard);
 }
 
+// ----------------------------------------------------------------------------
+// Function statsDistribution()
+// ----------------------------------------------------------------------------
+
+template <typename TSpec, typename TConfig>
+inline void statsDistributionReads(Trimming<TSpec, TConfig> & me, Before)
+{
+    statsDistributionReads(me.reads.seqs.i1, me.stats.distriBefore);
+    if(IsSameType<typename TConfig::TSequencing, SequencingPaired>::VALUE)
+    {
+        statsDistributionReads(me.reads.seqs.i2, me.stats.distriBefore);
+    }
+}
+
+template <typename TSpec, typename TConfig>
+inline void statsDistributionReads(Trimming<TSpec, TConfig> & me, After)
+{
+    statsDistributionReads(me.reads.seqs.i1, me.stats.distriAfter);
+    if(IsSameType<typename TConfig::TSequencing, SequencingPaired>::VALUE)
+    {
+        statsDistributionReads(me.reads.seqs.i2, me.stats.distriAfter);
+    }
+}
 
 // ----------------------------------------------------------------------------
 // Function writeReads()
@@ -591,7 +716,11 @@ inline void runTrimming(Trimming<TSpec, TConfig> & me)
         me.options.logger->debug("Batch : {}", batch);
         me.options.logger->debug("\tLoad");
         loadReads(me);
-        size(me.reads, me.stats.totalReads);
+        if (me.options.isReportFile)
+        {
+            size(me.reads, me.stats.totalReads);
+            statsDistributionReads(me, Before());
+        }
         if (empty(me.reads)) break;
         me.options.logger->debug("\tTrim");
         trim(me);
@@ -604,7 +733,11 @@ inline void runTrimming(Trimming<TSpec, TConfig> & me)
         }
         me.options.logger->debug("\tUpdate");
         update(me.reads);
-        size(me.reads, me.stats.keepReads);
+        if (me.options.isReportFile)
+        {
+            size(me.reads, me.stats.keepReads);
+            statsDistributionReads(me, After());
+        }
         me.options.logger->debug("\tWrite");
         writeReads(me);
         me.options.logger->debug("\tClear");
@@ -651,6 +784,5 @@ TSequencing const &, TInputFormat const &, TOutputFormat const &)
     Trimming<void, TConfig> trimming(options);
     runTrimming(trimming);
 }
-
 
 #endif  // #ifndef APP_HMNTRIMMER_H_

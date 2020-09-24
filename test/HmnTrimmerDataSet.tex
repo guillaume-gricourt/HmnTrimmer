@@ -299,7 +299,7 @@ Sequencing : paired input/output
     \textbf{C} & 3 sequences truncated & 5:2:60 & QUALTAIL-A\\ \hline
     \textbf{D} & 3 sequences truncated & 5:5:60 & QUALTAIL-A\\ \hline
     \textbf{E} & 3 sequences trimmed & 5:5:70 & QUALTAIL-B\\ \hline
-    \textbf{F} & 1 sequence truncated & 3:10:79 & QUALTAIL-C\\ \hline
+    \textbf{F} & 2 sequences trimmed, 1 sequence truncated & 3:10:46 & QUALTAIL-E\\ \hline
     \textbf{G} & 1 sequence trimmed & 3:10:81 & QUALTAIL-C\\ \hline
 \end{tabular}
 \end{table}
@@ -330,4 +330,16 @@ Sequencing : paired input/output
 \end{tabular}
 \end{table}
 
+\subsection{Report file}
+Goal : test data in report file.\\
+Gold Input : QUALTAIL\\
+Sequencing : paired input/output
+\begin{table}[H]
+\begin{tabular}{|l|c|c|c|c|} \hline
+    \textbf{Name} & \textbf{Test} & \textbf{Trimmer} & \textbf{Output} \\ \hline
+    \textbf{E} & 3 sequences trimmed & 5:5:70 & QUALTAIL-B\\ \hline
+    \textbf{F} & 2 sequences trimmed, 1 sequence truncated & 3:10:46 & QUALTAIL-E\\ \hline
+    %\textbf{G} & 1 sequence trimmed & 3:10:81 & QUALTAIL-C\\ \hline
+\end{tabular}
+\end{table}
 \end{document}

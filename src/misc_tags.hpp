@@ -88,4 +88,14 @@ typedef Tag<TripleTwo_>             TripleTwo;
 struct TripleThree_;
 typedef Tag<TripleThree_>           TripleThree;
 
+// ----------------------------------------------------------------------------
+// Tags Before After Trimming
+// ----------------------------------------------------------------------------
+
+struct Before_;
+typedef Tag<Before_>             Before;
+
+struct After_;
+typedef Tag<After_>             After;
+
 #endif  // #ifndef APP_HMNTRIMMER_MISCTAG_H_

@@ -13,10 +13,16 @@ Use software with debian systems :
    * `zlib1g-dev`  
 GCC used for compilation must be > 4 and < 8.  
 
-Test software :
+Test software :  
+   * `python3`  
 
-   * `python3`
-
+Create statistic report :  
+With conda :  
+   * `python3 django matplotlib seaborn packaging`  
+With ubuntu/debian using pip :  
+   * `python3-pip`
+   * `django matplotlib seaborn packaging`  
+   
 ## Installing
 
 Install first `igzip`  
@@ -121,23 +127,47 @@ Log level to use.
   --verbose 1..6 (error..trace)
 ```
 
+## Statistic report
+To create html report :
+```shell
+./script/RenderingReportFile.py \
+  --template-file script/template.html \
+  --input-file JSON_FILE \
+  --output-file HTML_FILE
+```
+
 ## Docker
 
 ### Build Image
-`docker build -t hmntrimmer:1.0.0 .`  
+`docker build -t hmntrimmer:<VERSION> .`  
 To save space, `test` folder isn't copied in image.
 
-### Run
+### Trimming
 ```shell
 docker run \
     -it \
     --rm \
     -v $PWD:$PWD \
-    hmntrimmer:1.0.0 \
+    hmntrimmer:<VERSION> \
     --input-fastq-forward $PWD/test/GoldInput/BIG.R1.fastq \
     --output-fastq-forward $PWD/test/DockerTest.R1.fastq.gz \
+    --output-report $PWD/test/DockerTest.json \
     --length-min 50
-``` 
+```
+
+### Statistic report
+```shell
+docker run \
+    -it \
+    --rm \
+    -v $PWD:$PWD \
+    --entrypoint /opt/HmnTrimmer/script/RenderingReportFile.py \
+    hmntrimmer:<VERSION> \
+    --input-file $PWD/test/DockerTest.json \
+    --output-file $PWD/test/DockerTest.html \
+    --template-file /opt/HmnTrimmer/script/template.html
+```
+ 
 # Built with these main libraries
 
 * [SeqAn](https://seqan.readthedocs.io/en/master/index.html) - Essential library to work with HTS files, algorithms

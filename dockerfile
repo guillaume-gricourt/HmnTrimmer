@@ -4,9 +4,12 @@ LABEL application="HmnTrimmer"
 LABEL maintainer="guillaume.gricourt@aphp.fr"
 
 RUN apt-get update && \
-    apt-get install -y yasm && \
-    apt-get install -y build-essential && \
-    apt-get install -y zlib1g-dev
+    apt-get install -y build-essential yasm && \
+    apt-get install -y zlib1g-dev && \
+    apt-get install -y python3-pip
+    
+RUN pip3 install --upgrade pip
+RUN pip install django matplotlib seaborn packaging
 
 WORKDIR /opt
 RUN mkdir HmnTrimmer

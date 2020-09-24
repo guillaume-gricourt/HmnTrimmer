@@ -770,6 +770,26 @@ inline void size(SeqStore<TSpec, TConfig> const & me, TValue & len)
 }
 
 // ----------------------------------------------------------------------------
+// Function statsDistributionReads()
+// ----------------------------------------------------------------------------
+
+template <typename TSeqs, typename TMap> inline void 
+statsDistributionReads(TSeqs & seqs, TMap & map)
+{
+    typedef typename Iterator<TSeqs const, Standard>::Type      TSeqsIt;
+    typedef typename Value<TSeqs const>::Type                   TSeqsValue;
+    typedef typename Size<TSeqsValue>::Type                     TSize;
+
+    iterate(seqs, [&](TSeqsIt const & it)
+    {
+        TSeqsValue const & matches = value(it);
+        TSize size = length(matches);
+        map[size] += 1;
+    },
+    Standard(), Serial());    
+}
+
+// ----------------------------------------------------------------------------
 // Function readRecords()
 // ----------------------------------------------------------------------------
 
@@ -782,7 +802,6 @@ TValue const & readBatch, FFastq, SequencingSingle)
 {
     readRecords(me.names.i1, me.seqs.i1, fileIn.i1, readBatch);
 }
-
 
 template <typename TSpec, typename TConfig, typename TFileSpec,
 typename TValue>
@@ -997,7 +1016,7 @@ Pair<FormattedFile<Fastq, Output, TFileSpec>> & fileOut, FFastq, SequencingPaire
     SEQAN_OMP_PRAGMA(parallel sections)
     {
         SEQAN_OMP_PRAGMA(section)
-        {    
+        {   
             writeRecords(fileOut.i1, me.names.i1, me.seqs.i1);
         }
         SEQAN_OMP_PRAGMA(section)
