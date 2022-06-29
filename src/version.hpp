@@ -1,2 +1,2 @@
-#define HMNTRIMMER_VERSION "0.6.0"
+#define HMNTRIMMER_VERSION "0.6.3"
 #define HMNTRIMMER_DATE "Sept. 2020"
