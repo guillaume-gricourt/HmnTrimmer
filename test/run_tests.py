@@ -8,6 +8,7 @@ import json
 import logging
 import os
 import tempfile
+import shutil
 import subprocess
 import sys
 
@@ -179,7 +180,9 @@ def create_tmp_files(temp_files, files, nb=1, exts=None):
 def main():
     # Defined paths.
     dir_test = os.path.dirname(os.path.realpath(__file__))
-    path_program = os.path.join(os.path.dirname(dir_test), 'HmnTrimmer')
+    path_program = shutil.which("HmnTrimmer")
+    if path_program is None:
+        path_program = os.path.join(os.path.dirname(dir_test), 'HmnTrimmer')
     path_gold_input = os.path.join(dir_test, 'GoldInput')
     path_gold_output = os.path.join(dir_test, 'GoldOutput')
 
