@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.6.5](https://github.com/guillaume-gricourt/HmnTrimmer/tree/0.6.5) (2022-07-02)
+
+[Full Changelog](https://github.com/guillaume-gricourt/HmnTrimmer/compare/0.6.4...0.6.5)
+
 ## [0.6.4](https://github.com/guillaume-gricourt/HmnTrimmer/tree/0.6.4) (2022-07-02)
 
 [Full Changelog](https://github.com/guillaume-gricourt/HmnTrimmer/compare/0.6.3...0.6.4)
