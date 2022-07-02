@@ -1,17 +1,35 @@
-<h3 align=center>HmnTrimmer</h3>
+<h2 align=center>HmnTrimmer</h2>
 
-# Introduction
+[![Github Release](https://img.shields.io/github/v/release/guillaume-gricourt/HmnTrimmer)](version) [![Conda Release](https://img.shields.io/conda/vn/bioconda/hmntrimmer.svg)](https://anaconda.org/bioconda/hmntrimmer)  
+[![DOI](https://zenodo.org/badge/270999070.svg)](https://zenodo.org/badge/latestdoi/270999070)  
+
 A trimmer of reads produced by NGS dedicated for common applications like genomic, transcriptomic, targeted metagenomic and shotgun metagenomic.
 
-# Getting Started
+# Install
 
-## Prerequisite
+## Conda (recommanded)
 
+```shell
+conda install -c bioconda hmntrimmer
+```
+
+## Docker
+
+```shell
+# From docker hub
+docker pull hmntrimmer:<VERSION>
+# From github
+docker pull ghcr.io/guillaume-gricourt/hmntrimmer:<VERSION>
+```
+
+## Manual
+
+### Prerequisites
 Use software with debian systems :  
    * `yasm`  
    * `build-essential`  
    * `zlib1g-dev`  
-GCC used for compilation must be > 4 and < 8.  
+GCC used for compilation must be > 4 and < 9.  
 
 Test software :  
    * `python3`  
@@ -23,7 +41,7 @@ With ubuntu/debian using pip :
    * `python3-pip`
    * `django matplotlib seaborn packaging`  
    
-## Installing
+### Compile
 
 Install first `igzip`  
 `hmndir=./HmnTrimmer`  
@@ -37,7 +55,7 @@ Then
 
 `make test`
 
-## Running
+## Getting started
 Software is available by :  
 `HmnTrimmer [OPTIONS] [TRIMMERS]`
 
@@ -130,17 +148,16 @@ Log level to use.
 ## Statistic report
 To create html report :
 ```shell
-./script/RenderingReportFile.py \
-  --template-file script/template.html \
+# Clone the repository
+git clone git@github.com:guillaume-gricourt/HmnTrimmer.git
+# Run
+HmnTrimmerReport \
+  --template-file ./HmnTrimmer/script/template.html \
   --input-file JSON_FILE \
   --output-file HTML_FILE
 ```
 
 ## Docker
-
-### Build Image
-`docker build -t hmntrimmer:<VERSION> .`  
-To save space, `test` folder isn't copied in image.
 
 ### Trimming
 ```shell
@@ -167,7 +184,7 @@ docker run \
     --output-file $PWD/test/DockerTest.html \
     --template-file /opt/HmnTrimmer/script/template.html
 ```
- 
+
 # Built with these main libraries
 
 * [SeqAn](https://seqan.readthedocs.io/en/master/index.html) - Essential library to work with HTS files, algorithms
@@ -181,8 +198,4 @@ docker run \
 
 # Authors
 
-* **Guillaume Gricourt** - *Initial work*
-
-# License
-
-See the [LICENSE.md](LICENSE) file for details
+* **Guillaume Gricourt**

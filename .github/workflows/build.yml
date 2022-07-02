@@ -1,0 +1,156 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - stable
+
+jobs:
+
+  Tag:
+    runs-on: ubuntu-latest
+    outputs:
+     tag: ${{ steps.tag_label.outputs.tag }}
+     changelog: ${{ steps.tag_raw.outputs.changelog }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: 'Bump version and push tag - dry run'
+        id: tag_raw
+        uses: mathieudutour/github-tag-action@v6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          release_branches: stable
+          tag_prefix:
+          dry_run: true
+      - name: 'Format tag'
+        id: tag_label
+        env:
+          TAG: ${{ steps.tag_raw.outputs.new_tag }}
+        run: |
+          TAG=$(echo "$TAG" | cut -f1 -d "-")
+          echo "::set-output name=tag::$TAG"
+      - name: 'Bump version and push tag'
+        id: tag
+        uses: mathieudutour/github-tag-action@v6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          release_branches: stable
+          custom_tag: ${{ steps.tag_label.outputs.tag }}
+          tag_prefix:
+
+  Changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: 'Check file present'
+        run: |
+          [[ -f CHANGELOG.md ]] || touch CHANGELOG.md
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3 # Not needed with a .ruby-version file
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+      - name: 'Generate CHANGELOG'
+        env:
+          CHANGELOG_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gem install github_changelog_generator
+          USER=$(echo "$GITHUB_REPOSITORY" | sed -e 's/\// /g' | awk '{print $1}')
+          PROJECT=$(echo "$GITHUB_REPOSITORY" | sed -e 's/\// /g' | awk '{print $2}')
+          echo "$USER $PROJECT"
+          github_changelog_generator --user "$USER" --project "$PROJECT" --no-unreleased
+      - name: 'Upload Artifact Changelog'
+        uses: actions/upload-artifact@v2
+        with:
+          name: changelog-artifact
+          path: CHANGELOG.md
+          retention-days: 1
+
+  Version:
+    needs: Tag
+    runs-on: ubuntu-latest
+    outputs:
+      version_path: ${{ steps.update_version.outputs.version_path }}
+      version_dir: ${{ steps.update_version.outputs.version_dir }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: stable
+      - name: 'Update version.hpp'
+        id: update_version
+        env:
+          TAG: ${{ needs.Tag.outputs.tag }}
+        run: |
+          VERSION_PATH=$(find . -name version.hpp | head -n 1)
+          VERSION_DIR=$(dirname "$VERSION_PATH")
+          cur=$(date "+%b. %Y")
+          sed -i "1s/\".*\"/\"$TAG\"/" "$VERSION_PATH"
+          sed -i "2s/\".*\"/\"$cur\"/" "$VERSION_PATH"
+          echo "::set-output name=version_path::${VERSION_PATH}"
+          echo "::set-output name=version_dir::${VERSION_DIR}"
+      - name: 'Upload Artifact Version'
+        uses: actions/upload-artifact@v2
+        with:
+          name: version-artifact
+          path: ${{ steps.update_version.outputs.version_path }}
+          retention-days: 1
+
+  Commit:
+    needs: [ Tag, Changelog, Version ]
+    runs-on: ubuntu-latest
+    steps:
+      # Get Data
+      - name: 'Checkout'
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: 'Download Artifact Version'
+        uses: actions/download-artifact@v2
+        with:
+          name: version-artifact
+          path: ${{ needs.Version.outputs.version_dir }}
+      - name: 'Download Artifact Changelog'
+        uses: actions/download-artifact@v2
+        with:
+          name: changelog-artifact
+      # Commit
+      - name: 'Commit files'
+        run: |
+          git config --local user.email "$GITHUB_EMAIL"
+          git config --local user.name "$GITHUB_USERNAME"
+          git add .
+          git commit -m "doc(changelog): update"
+        env:
+          GITHUB_USERNAME: guillaume-gricourt
+          GITHUB_EMAIL: guipagui@gmail.com
+      - name: 'Push changes'
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+      - name: 'Update main branch'
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: main
+
+  Release:
+    needs: [Tag, BuildPip]
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Download Artifact Package - Pip'
+        uses: actions/download-artifact@v2
+        with:
+          name: package-pip-artifact
+      - name: 'Create Release'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ needs.Tag.outputs.tag }}
+          body: ${{ needs.Tag.outputs.changelog }}
+          files: ${{ needs.BuildPip.outputs.asset }}

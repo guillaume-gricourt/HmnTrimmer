@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # coding: utf8
 
 import argparse
@@ -31,7 +31,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 VERSIONUSED = {
     "min" : "0.6.0",
-    "max" : "0.6.0"
+    "max" : "0.7.0"
 }
 
 ##############
@@ -41,7 +41,7 @@ VERSIONUSED = {
 def valid_files(choices, fname):
     isValid = True
     ext = os.path.splitext(fname)
-    if len(ext) > 0: 
+    if len(ext) > 0:
         ext = ext[1][1:]
         if not ext in choices:
             isValid = False
@@ -170,7 +170,7 @@ context['software'] = software
 def format_filename(filenames):
 	filenames = [ os.path.basename(x) for x in filenames ]
 	return ', '.join(filenames)
-	
+
 FileTuple = namedtuple('FileTuple', ['finput', 'foutput'])
 ffile = FileTuple(
     finput = format_filename(data.get('analyze', {}).get('file',{}).get('input',[])),
