@@ -1,9 +1,8 @@
-<h3 align=center>HmnTrimmer</h3>
+<h2 align=center>HmnTrimmer</h2>
 
 [![Github Release](https://img.shields.io/github/v/release/guillaume-gricourt/HmnTrimmer)](version) [![Conda Release](https://img.shields.io/conda/vn/bioconda/hmntrimmer.svg)](https://anaconda.org/bioconda/hmntrimmer)  
 [![DOI](https://zenodo.org/badge/270999070.svg)](https://zenodo.org/badge/latestdoi/270999070)  
 
-# Introduction
 A trimmer of reads produced by NGS dedicated for common applications like genomic, transcriptomic, targeted metagenomic and shotgun metagenomic.
 
 # Install
@@ -30,7 +29,7 @@ Use software with debian systems :
    * `yasm`  
    * `build-essential`  
    * `zlib1g-dev`  
-GCC used for compilation must be > 4 and < 8.  
+GCC used for compilation must be > 4 and < 9.  
 
 Test software :  
    * `python3`  
@@ -152,7 +151,7 @@ To create html report :
 # Clone the repository
 git clone git@github.com:guillaume-gricourt/HmnTrimmer.git
 # Run
-./HmnTrimmer/script/RenderingReportFile.py \
+HmnTrimmerReport \
   --template-file ./HmnTrimmer/script/template.html \
   --input-file JSON_FILE \
   --output-file HTML_FILE
@@ -200,7 +199,3 @@ docker run \
 # Authors
 
 * **Guillaume Gricourt**
-
-# License
-
-See the [LICENSE.md](LICENSE) file for details
