@@ -141,7 +141,7 @@ jobs:
           branch: main
 
   Release:
-    needs: [Commit]
+    needs: [ Tag, Commit ]
     runs-on: ubuntu-latest
     steps:
       - name: 'Create Release'
@@ -149,4 +149,3 @@ jobs:
         with:
           tag_name: ${{ needs.Tag.outputs.tag }}
           body: ${{ needs.Tag.outputs.changelog }}
-          files: ${{ needs.BuildPip.outputs.asset }}
