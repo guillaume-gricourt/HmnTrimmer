@@ -86,8 +86,6 @@ jobs:
         env:
           TAG: ${{ needs.Tag.outputs.tag }}
         run: |
-            #define HMNTRIMMER_VERSION "0.6.3"
-            #define HMNTRIMMER_DATE "Sept. 2020"
           VERSION_PATH=$(find . -name version.hpp | head -n 1)
           VERSION_DIR=$(dirname "$VERSION_PATH")
           cur=$(date "+%b. %Y")
