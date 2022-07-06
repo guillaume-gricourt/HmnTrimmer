@@ -1,6 +1,6 @@
 name: Tests
 
-on: [ push, fork]
+on: [push, fork]
 
 jobs:
 
@@ -22,7 +22,7 @@ jobs:
           docker build . --file Dockerfile --tag ${{ env.image_name }} --label "runnumber=${GITHUB_RUN_ID}"
       - name: 'Run test'
         run: |
-          docker run --rm -v $PWD:$PWD -t --workdir $PWD --entrypoint /usr/bin/make ${{ env.image_name }} test
+          docker run --rm -v "$PWD":"$PWD" -t --workdir "$PWD" --entrypoint /usr/bin/make ${{ env.image_name }} test
 
   Lint:
     runs-on: ubuntu-latest

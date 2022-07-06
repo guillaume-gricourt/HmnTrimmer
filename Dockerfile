@@ -10,12 +10,17 @@ RUN apt-get install -y \
     yasm \
     zlib1g-dev
 
-# libssl-dev libffi-dev \
-RUN wget https://bootstrap.pypa.io/pip/3.5/get-pip.py
-RUN python3 get-pip.py --ignore-installed
-RUN pip3 install django matplotlib seaborn packaging
-
 WORKDIR /opt
+# Install python
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
+    chmod +x Miniconda3-latest-Linux-x86_64.sh && \
+    ./Miniconda3-latest-Linux-x86_64.sh -b -p /opt/miniconda3 && \
+    rm Miniconda3-latest-Linux-x86_64.sh
+ENV PATH="/opt/miniconda3/bin/:$PATH"
+# Install deps
+RUN /opt/miniconda3/bin/pip3 install django matplotlib seaborn packaging
+
+# Install HmnTrimmer
 RUN mkdir HmnTrimmer
 COPY . /opt/HmnTrimmer/
 
