@@ -1,19 +1,20 @@
-<h2 align=center>HmnTrimmer</h2>
+# HmnTrimmer
 
 [![Github Release](https://img.shields.io/github/v/release/guillaume-gricourt/HmnTrimmer)](version) [![Conda Release](https://img.shields.io/conda/vn/bioconda/hmntrimmer.svg)](https://anaconda.org/bioconda/hmntrimmer)  
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)[![GitHub Super-Linter](https://github.com/guillaume-gricourt/HmnTrimmer/workflows/Tests/badge.svg)](https://github.com/marketplace/actions/super-linter)  
 [![DOI](https://zenodo.org/badge/270999070.svg)](https://zenodo.org/badge/latestdoi/270999070)  
 
 A trimmer of reads produced by NGS dedicated for common applications like genomic, transcriptomic, targeted metagenomic and shotgun metagenomic.
 
-# Install
+## Install
 
-## Conda (recommanded)
+### Conda (recommanded)
 
 ```shell
 conda install -c bioconda hmntrimmer
 ```
 
-## Docker
+### Docker
 
 ```shell
 # From docker hub
@@ -22,26 +23,26 @@ docker pull hmntrimmer:<VERSION>
 docker pull ghcr.io/guillaume-gricourt/hmntrimmer:<VERSION>
 ```
 
-## Manual
+### Manual
 
-### Prerequisites
+*Prerequisites*  
 Use software with debian systems :  
-   * `yasm`  
-   * `build-essential`  
-   * `zlib1g-dev`  
+* `yasm`
+* `build-essential`
+* `zlib1g-dev`
 GCC used for compilation must be > 4 and < 9.  
 
-Test software :  
-   * `python3`  
+*Test software*  
+* `python3`
 
-Create statistic report :  
+*Create statistic report*  
 With conda :  
-   * `python3 django matplotlib seaborn packaging`  
+* `python3 django matplotlib seaborn packaging`  
 With ubuntu/debian using pip :  
-   * `python3-pip`
-   * `django matplotlib seaborn packaging`  
-   
-### Compile
+* `python3-pip`
+* `django matplotlib seaborn packaging`
+
+*Compile*  
 
 Install first `igzip`  
 `hmndir=./HmnTrimmer`  
@@ -51,7 +52,7 @@ Install first `igzip`
 Then  
 `make`
 
-## Test
+### Test
 
 `make test`
 
@@ -67,9 +68,9 @@ Minimal example :
   --length-min 50
 ```
 
-# Commands
+## Commands
 
-## Input/Output
+### Input/Output
 
 Files are indicated with these differents commands :  
 ```shell
@@ -89,11 +90,11 @@ If sequencing is paired, file produced is interleaved.
   --output-fastq-discard OUTPUT_FILE
 ```
 
-## Trimmers
+### Trimmers
 Several categories : quality, length and information.  
 Firstly trimmers based on information are applied, then based on quality finaly based on length.
 
-### Quality Tail 
+*Quality Tail*  
 Based on a successive number of bases from end of read which are below a cut off.  
 Two parameters : quality, optionaly the number of bases below the quality firstly indicated (default 1 base) and the length percent cut off request to keep read if it was truncated (default not removed).  
 Format :  `<int>:<int>:<int>`  
@@ -101,7 +102,7 @@ Format :  `<int>:<int>:<int>`
   --quality-tail STRING
 ```
 
-### Quality Sliding Window 
+*Quality Sliding Window*  
 Based on a sliding window of bases from end of read which are below a minimal mean.  
 Two parameters : mean quality and size of window.  
 Format : `<int>:<int>`  
@@ -109,44 +110,44 @@ Format : `<int>:<int>`
   --quality-sliding-window STRING
 ```
 
-### Length Min
+*Length Min*  
 Minimal length to keep a read.
 ```shell
   --length-min INTEGER
 ```
 
-### Information Dust
+*Information Dust*  
 Based on Dust score.
 ```shell
   --information-dust INTEGER
 ```
 
-## Performance/Other Options:
+### Performance/Other Options
 
-### Report
+*Report*  
 Optionaly save a report, with differents statistics. Format Json.
 ```shell
   --output-report OUTPUT_FILE
 ```
-### Threads
+*Threads*  
 Specify number of threads to use.
 ```shell
   --threads 1..8
 ```
-### Reads batch
+*Reads batch*  
 Reads are read in batch. Defined size of batch.
 ```shell
   --reads-batch 100..50000000
 ```
 
-### Verbose
+*Verbose*  
 Log level to use.
 ```shell
   --verbose 1..6 (error..trace)
 ```
 
-## Statistic report
-To create html report :
+### Statistic report
+To create HTML report :
 ```shell
 # Clone the repository
 git clone git@github.com:guillaume-gricourt/HmnTrimmer.git
@@ -157,9 +158,9 @@ HmnTrimmerReport \
   --output-file HTML_FILE
 ```
 
-## Docker
+### Use docker
 
-### Trimming
+*Trimming*  
 ```shell
 docker run \
     -it \
@@ -172,7 +173,7 @@ docker run \
     --length-min 50
 ```
 
-### Statistic report
+*Statistic report with docker*  
 ```shell
 docker run \
     -it \
@@ -185,17 +186,17 @@ docker run \
     --template-file /opt/HmnTrimmer/script/template.html
 ```
 
-# Built with these main libraries
+## Built with these main libraries
 
 * [SeqAn](https://seqan.readthedocs.io/en/master/index.html) - Essential library to work with HTS files, algorithms
 * [rapidjson](https://rapidjson.org/) - Read/Write Json files efficiently
 * [spdlog](https://github.com/gabime/spdlog) - Nice log manager
 * [igzip](https://software.intel.com/content/www/us/en/develop/articles/igzip-a-high-performance-deflate-compressor-with-optimizations-for-genomic-data.html) - Very fast deflate algorithm
 
-# Versioning
+## Versioning
 
 [SemVer](http://semver.org/) is used for versioning.
 
-# Authors
+## Authors
 
 * **Guillaume Gricourt**

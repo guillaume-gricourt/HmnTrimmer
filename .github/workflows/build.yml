@@ -10,8 +10,8 @@ jobs:
   Tag:
     runs-on: ubuntu-latest
     outputs:
-     tag: ${{ steps.tag_label.outputs.tag }}
-     changelog: ${{ steps.tag_raw.outputs.changelog }}
+      tag: ${{ steps.tag_label.outputs.tag }}
+      changelog: ${{ steps.tag_raw.outputs.changelog }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -53,8 +53,8 @@ jobs:
           [[ -f CHANGELOG.md ]] || touch CHANGELOG.md
       - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3 # Not needed with a .ruby-version file
-          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+          ruby-version: 3
+          bundler-cache: true
       - name: 'Generate CHANGELOG'
         env:
           CHANGELOG_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -101,7 +101,7 @@ jobs:
           retention-days: 1
 
   Commit:
-    needs: [ Tag, Changelog, Version ]
+    needs: [Tag, Changelog, Version]
     runs-on: ubuntu-latest
     steps:
       # Get Data
@@ -141,7 +141,7 @@ jobs:
           branch: main
 
   Release:
-    needs: [ Tag, Commit ]
+    needs: [Tag, Commit]
     runs-on: ubuntu-latest
     steps:
       - name: 'Create Release'
