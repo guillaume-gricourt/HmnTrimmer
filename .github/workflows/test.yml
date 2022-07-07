@@ -4,7 +4,7 @@ on: [push, fork]
 
 jobs:
 
-  Docker:
+  Functional:
     runs-on: ubuntu-latest
     permissions:
       packages: write
