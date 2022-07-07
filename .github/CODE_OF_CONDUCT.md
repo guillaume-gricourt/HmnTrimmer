@@ -46,4 +46,4 @@ If the incident involves a core member, the core member must recuse themselves
 from the response process.
 
 This policy was modified from
-https://www.djangoproject.com/conduct/enforcement-manual, [CCBY3.0](https://creativecommons.org/licenses/by/3.0/)
+<https://www.djangoproject.com/conduct/enforcement-manual>, [CCBY3.0](https://creativecommons.org/licenses/by/3.0/)
