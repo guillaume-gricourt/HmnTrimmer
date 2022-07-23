@@ -42,7 +42,7 @@ NGS applications, such as genomics, transcriptomics, shotgun or targeted metagen
 # Statement of need
 
 Trimming tools are usually dedicated to only one application, while they partially cover others, and to reads generated exclusively by Illumina or Ion Torrent instruments.  
-Popular softwares like fastp [@Davis2018], one of the latest and fastest developed tool, and Trimmomatic [@Bolger2014] use mainly algorithms based on the quality scores and the length of the reads.
+Popular softwares like fastp [@Chen2018], one of the latest and fastest developed tool, and Trimmomatic [@Bolger2014] use mainly algorithms based on the quality scores and the length of the reads.
 Others like Reaper or Kraken tools [@Davis2013] trim sequences using DUST algorithm.
 Rare softwares, like Prinseq [@Schmieder2011] apply all algorithms to trim the reads.
 Surprinsigly, none of them optimize the step to deflate sequences and deal with single or paired-end FASTQ files with all these algorithms.
@@ -64,7 +64,7 @@ All implemented algorithms work in $0(1)$ in space.
 
 
 HmnTrimmer is a user-friendly, efficient trimming tool writtent in C++ templates using Seqan extended with igzip [@Guilford2014], spdlog and rapidJson libraries.
-It can be used with Docker, images are available at Github and DockerHub.
+It can be used with Docker, images are available at GitHub and DockerHub.
 HmnTrimmer accepts standard file formats, either compressed or not, as input or output: FASTQ or interleaved FASTQ, compressed or not.
 A JSON report can be produced, given an evidence of multiple elements about the software, the command line, the running time or the number of sequences.
 This file can be integrated into dashboard reports or a convenient script is provided to visualize these statistics.
