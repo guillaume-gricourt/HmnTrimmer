@@ -33,7 +33,7 @@ jobs:
           ref: ${{ github.ref }}
           fetch-depth: 0
       - name: Lint Code Base
-        uses: github/super-linter@v4
+        uses: github/super-linter@v5
         env:
           VALIDATE_DOCKERFILE_HADOLINT: false
           VALIDATE_LATEX: false
