@@ -13,7 +13,7 @@ jobs:
       tag: ${{ steps.tag_label.outputs.tag }}
       changelog: ${{ steps.tag_raw.outputs.changelog }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
           fetch-depth: 0
@@ -44,7 +44,7 @@ jobs:
   Changelog:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           persist-credentials: false
           fetch-depth: 0
@@ -78,7 +78,7 @@ jobs:
       version_path: ${{ steps.update_version.outputs.version_path }}
       version_dir: ${{ steps.update_version.outputs.version_dir }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: stable
       - name: 'Update version.hpp'
@@ -106,7 +106,7 @@ jobs:
     steps:
       # Get Data
       - name: 'Checkout'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           persist-credentials: false
           fetch-depth: 0
